@@ -23,6 +23,13 @@ public interface Master {
      * See `WorkerTest` to know how it works.
      */
     void createWorker() throws IOException;
+    //Determine if you want to use thread or process for worker
+
+    //Use high number of files with different formats
+    //Printout whenever we assign work and when a worker dies
+    //Cannot use process.isAlive to detect whether a worker is dead.
+    //Processes for workers
+    //Threads for heartbeat
 
     /**
      * The final result should be written to the stream specified here.
