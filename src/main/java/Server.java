@@ -34,9 +34,8 @@ public class Server
 				
 				System.out.println("Assigning new thread for this client"); 
 
-                // ProcessBuilder builder = new ProcessBuilder(ClientHandler); 
-				// create a new thread object
-				Process t = new ClientHandler(s, dis, dos);
+				// create a new thread object 
+				Thread t = new ClientHandler(s, dis, dos); 
 
 				// Invoking the start() method 
 				t.start(); 
@@ -72,11 +71,10 @@ class ClientHandler extends Thread
 	public void run() 
 	{ 
 		String received; 
-		String toreturn;
+		String toreturn; 
 		while (true) 
 		{ 
 			try { 
-                dos.writeUTF("/home/nikhil/Desktop/git_workspace/Systems-For-DataScience/project-2-group-8/src/test/resources/simple.txt");
 
 				// Ask user what he wants 
 				dos.writeUTF("What do you want?[Date | Time]..\n"+ 

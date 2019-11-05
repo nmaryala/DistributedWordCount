@@ -28,13 +28,7 @@ public class Client
 			// information between client and client handler 
 			while (true) 
 			{ 
-				String path = dis.readUTF();
-				BufferedReader reader = new BufferedReader(new FileReader(path));
-				String currentLine = reader.readLine();
-				System.out.println(currentLine);
-				reader.close();
-
-				System.out.println(dis.readUTF());
+				System.out.println(dis.readUTF()); 
 				String tosend = scn.nextLine(); 
 				dos.writeUTF(tosend); 
 				
