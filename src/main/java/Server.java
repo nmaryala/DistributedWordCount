@@ -34,7 +34,7 @@ public class Server
 				
 				System.out.println("Assigning new thread for this client"); 
 
-                ProcessBuilder builder = new ProcessBuilder(ClientHandler); 
+                // ProcessBuilder builder = new ProcessBuilder(ClientHandler); 
 				// create a new thread object
 				Process t = new ClientHandler(s, dis, dos);
 
@@ -51,7 +51,7 @@ public class Server
 } 
 
 // ClientHandler class 
-class ClientHandler extends Process 
+class ClientHandler extends Thread 
 { 
 	DateFormat fordate = new SimpleDateFormat("yyyy/MM/dd"); 
 	DateFormat fortime = new SimpleDateFormat("hh:mm:ss"); 
