@@ -43,7 +43,7 @@ public class Server
 			} 
 			catch (Exception e){ 
 				s.close(); 
-				e.printStackTrace(); 
+				// e.printStackTrace(); 
 			} 
 		} 
 	} 
@@ -114,7 +114,7 @@ class ClientHandler extends Thread
 						break; 
 				} 
 			} catch (IOException e) { 
-				e.printStackTrace(); 
+				// e.printStackTrace(); 
 			} 
 		} 
 		
@@ -125,7 +125,7 @@ class ClientHandler extends Thread
 			this.dos.close(); 
 			
 		}catch(IOException e){ 
-			e.printStackTrace(); 
+			// e.printStackTrace(); 
 		} 
 	} 
 } 

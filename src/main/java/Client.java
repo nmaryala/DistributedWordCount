@@ -12,6 +12,7 @@ public class Client
 	{ 
 		try
 		{ 
+			System.out.println("hey nikhil");
 			Scanner scn = new Scanner(System.in); 
 			
 			// getting localhost ip 
@@ -26,26 +27,34 @@ public class Client
 	
 			// the following loop performs the exchange of 
 			// information between client and client handler 
-			while (true) 
-			{ 
+			// while (true) 
+			// { 
 				System.out.println(dis.readUTF()); 
-				String tosend = scn.nextLine(); 
-				dos.writeUTF(tosend); 
+				// String tosend = scn.nextLine(); 
+				// dos.writeUTF(tosend); 
 				
 				// If client sends exit,close this connection 
 				// and then break from the while loop 
-				if(tosend.equals("Exit")) 
-				{ 
+				// if(tosend.equals("Exit")) 
+				// {
+					String fileContent = "Hello Learner !! Welcome to howtodoinjava.com.";
+     
+					BufferedWriter writer = new BufferedWriter(new FileWriter("temp/samplefile1"+args[0]+".txt"));
+					writer.write(fileContent);
+					writer.close();
+					
 					System.out.println("Closing this connection : " + s); 
 					s.close(); 
 					System.out.println("Connection closed"); 
-					break; 
-				} 
+
+
+				// 	// break; 
+				// } 
 				
 				// printing date or time as requested by client 
-				String received = dis.readUTF(); 
-				System.out.println(received); 
-			} 
+				// String received = dis.readUTF(); 
+				// System.out.println(received); 
+			// } 
 			
 			// closing resources 
 			scn.close(); 
