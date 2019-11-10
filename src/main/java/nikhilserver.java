@@ -3,7 +3,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
  
-public class nikhilserver {
+public class nikhilserver extends Thread{
     public static void main(String[] args) throws InterruptedException,
             IOException {
         ProcessBuilder pb = new ProcessBuilder("java", "Client", "1");
