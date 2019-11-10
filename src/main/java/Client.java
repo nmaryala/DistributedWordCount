@@ -27,37 +27,27 @@ public class Client
 	
 			// the following loop performs the exchange of 
 			// information between client and client handler 
-			// while (true) 
-			// { 
-				System.out.println(dis.readUTF()); 
-				// String tosend = scn.nextLine(); 
-				// dos.writeUTF(tosend); 
+			while (true)
+			{ 
+				String masterResponse = dis.readUTF();
+				System.out.println(masterResponse);
 				
-				// If client sends exit,close this connection 
-				// and then break from the while loop 
-				// if(tosend.equals("Exit")) 
-				// {
-					String fileContent = "Hello Learner !! Welcome to howtodoinjava.com.";
-     
-					BufferedWriter writer = new BufferedWriter(new FileWriter("temp/samplefile1"+args[0]+".txt"));
-					writer.write(fileContent);
-					writer.close();
-					
-					System.out.println("Closing this connection : " + s); 
-					s.close(); 
-					System.out.println("Connection closed"); 
+				String fileContent = "Hello Learner !! Welcome to howtodoinjava.com.";
+	
+				BufferedWriter writer = new BufferedWriter(new FileWriter("temp/samplefile1"+args[0]+".txt"));
+				writer.write(fileContent);
+				writer.close();
 
+				dos.writeUTF("Done");
 
-				// 	// break; 
-				// } 
-				
-				// printing date or time as requested by client 
-				// String received = dis.readUTF(); 
-				// System.out.println(received); 
-			// } 
-			
-			// closing resources 
-			scn.close(); 
+				if(masterResponse == "Over"){
+					break;
+				}
+			} 
+			System.out.println("Closing this connection : " + s);
+			s.close(); 
+			System.out.println("Connection closed"); 
+	
 			dis.close(); 
 			dos.close(); 
 		}catch(Exception e){ 
