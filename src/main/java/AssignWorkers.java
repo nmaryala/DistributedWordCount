@@ -23,6 +23,17 @@ class AssignWorkers extends Thread {
 			for(Integer i=1;i <= this.numberOfWorkers; i++){
 				System.out.println("Echo Output:\n" + output(processes.get(i-1).getInputStream()));
 			}
+
+			try{
+			int exitCode = processes.get(0).waitFor();
+				if (exitCode != 0){
+					System.out.println("\nExited with error code : " + exitCode);
+				}
+			}
+			catch(Exception e){
+				e.printStackTrace();
+			}
+			
 		} catch (IOException e) {
 			e.printStackTrace();
 		}

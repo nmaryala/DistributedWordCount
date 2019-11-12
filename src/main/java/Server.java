@@ -3,10 +3,6 @@ import java.util.*;
 import java.net.*;
 import java.util.LinkedList;
 import java.util.Queue;
-import java.util.ArrayList;
-import java.util.Iterator;
-import java.util.List;
-
 
 // Server class 
 public class Server {
@@ -28,11 +24,11 @@ public class Server {
 		scn.close();
 
 		// server is listening on port 5056
-		ServerSocket ss = new ServerSocket(5003);
-
+		ServerSocket ss = new ServerSocket(5056);
+		ArrayList<Process> processes = new ArrayList<Process>();
 		// create a new thread object
 		try{
-			Thread t = new AssignWorkers(maxClients);
+			Thread t = new AssignWorkers(maxClients, processes);
 			t.start();
 		}
 		catch(Exception e){
@@ -68,8 +64,54 @@ public class Server {
 			}
 		}
 
+		HashMap<String, Integer> map1 = new HashMap<String, Integer>();
+
+		String line;
+		final File folder = new File("temp/immediate");
+		List<String> filenames = listFilesForFolder(folder);
+		for (int i = 0; i < filenames.size(); i++){
+			BufferedReader reader1 = new BufferedReader(new FileReader(filenames.get(i)));
+		while ((line = reader1.readLine()) != null)
+		{
+			String[] parts = line.split(":", 2);
+
+			if (!map1.containsKey(parts[0]))
+			{
+				String key = parts[0];
+				int value = Integer.parseInt(parts[1]);
+				map1.put(key, value);
+			} else {
+				int count = map1.get(parts[0]);
+					map1.put(parts[0], count + Integer.parseInt(parts[1]) );
+			}
+		}
+
+
+		reader1.close();
+
+		}
+
+
+		BufferedWriter writer = new BufferedWriter(new FileWriter("temp/result.txt"));
+		// map.forEach((key, value) -> System.out.println(key + ":" + value));
+		for (String key : map1.keySet()) {
+			writer.write(key + ":" + map1.get(key)+"\n");
+			writer.flush();
+			// dos.writeUTF(key + ":" + map.get(key))
+		}
+		writer.close();		
+
 		ss.close();
 	}
+
+	public static ArrayList<String> listFilesForFolder(final File folder) {
+		ArrayList<String> lis = new ArrayList<String>();
+		for (final File fileEntry : folder.listFiles()) {
+			lis.add("temp/immediate/"+fileEntry.getName());
+		}
+		return lis;
+	}
+	
 }
 
 
@@ -105,7 +147,7 @@ class ClientHandler extends Thread
 			this.clientWorkDictionary.put(this.clientNumber, new ArrayList<Integer>());
 			list = this.clientWorkDictionary.get(this.clientNumber);
 		}
-		String currentFileName = "random"+nextFileNumber+".txt";
+		String currentFileName = "simple"+nextFileNumber+".txt";
 		while (true) 
 		{ 
 			if (nextFileNumber == null){
@@ -137,47 +179,13 @@ class ClientHandler extends Thread
 					list.add(nextFileNumber);
 					System.out.println("Client" + s+" returned success for file number "+nextFileNumber);
 					nextFileNumber = this.inputQueue.poll();
-					currentFileName = "random"+nextFileNumber+".txt";
+					currentFileName = "simple"+nextFileNumber+".txt";
 				}
 				else{
 					this.inputQueue.add(nextFileNumber);
 					nextFileNumber = null;
 				}
-
-				HashMap<String, Integer> map1 = new HashMap<String, Integer>();
-
-			    String line;
-			    List<String> filenames = Arrays.asList("temp/samplefile1word1.txt", "temp/samplefile1word2.txt");  
-			    for (int i = 0; i < filenames.size(); i++){
-			    	BufferedReader reader1 = new BufferedReader(new FileReader(filenames.get(i)));
-			    while ((line = reader1.readLine()) != null)
-			    {
-			        String[] parts = line.split(":", 2);
-
-			        if (!map1.containsKey(parts[0]))
-			        {
-			            String key = parts[0];
-			            int value = Integer.parseInt(parts[1]);
-			            map1.put(key, value);
-			        } else {
-			            int count = map1.get(parts[0]);
-					     map1.put(parts[0], count + Integer.parseInt(parts[1]) );
-			        }
-			    }
 				
-				reader1.close();
-	
-			    }
-			  
- 
-				BufferedWriter writer = new BufferedWriter(new FileWriter("temp/result.txt"));
-				// map.forEach((key, value) -> System.out.println(key + ":" + value));
-				for (String key : map1.keySet()) {
-			        writer.write(key + ":" + map1.get(key)+"\n");
-			        writer.flush();
-			    	// dos.writeUTF(key + ":" + map.get(key))
-			    }
-				writer.close();								
 			} catch (IOException e) { 
 				// e.printStackTrace(); 
 			} 
