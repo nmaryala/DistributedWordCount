@@ -57,18 +57,17 @@ public class Client
 				      map.put(t, count + 1);
 				    }
 				 }
-				BufferedWriter writer = new BufferedWriter(new FileWriter("temp/samplefile1word" + args[0] + ".txt",true));
+				BufferedWriter writer = new BufferedWriter(new FileWriter("temp/samplefile1word" + args[0] + ".txt"));
 				// map.forEach((key, value) -> System.out.println(key + ":" + value));
 				for (String key : map.keySet()) {
 			        writer.write(key + ":" + map.get(key));
 			        writer.newLine();
 			        writer.flush();
-			    	// dos.writeUTF(key + ":" + map.get(key))
 			    }
 				writer.close();
 
 
-				// dos.writeUTF("Done");
+				dos.writeUTF("Done");
 
 				if(masterResponse == "Over"){
 					break;
