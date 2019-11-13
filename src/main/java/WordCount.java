@@ -12,28 +12,29 @@ public class WordCount implements Master {
     ArrayList<Process> processes;
     Integer workerNum;
     String[] filenames;
-    Queue<Integer> inputQueue = new LinkedList<>();
-    Dictionary<Integer, ArrayList<Integer>> clientWorkDictionary = new Hashtable();
+    Queue<String> inputQueue = new LinkedList<>();
+    Dictionary<Integer, ArrayList<String>> clientWorkDictionary = new Hashtable();
     Integer currentCount;
+    PrintStream printStream;
 
     public WordCount(int workerNum, String[] filenames) throws IOException {
         this.workerNum = workerNum;
         this.filenames = filenames;
         this.processes = new ArrayList<Process>();
         this.currentCount = 0;
-        for (Integer i = 1; i <= filenames.length; i++) {
-            this.inputQueue.add(i);
+        for (Integer i = 0; i < filenames.length; i++) {
+            this.inputQueue.add(filenames[i]);
         }
     }
 
     public void setOutputStream(PrintStream out) {
-
+        this.printStream = out;
     }
 
     public static void main(String[] args) throws Exception {
         System.out.println("started");
-        String[] filenames = { "temp/samplefile1word1.txt", "temp/samplefile1word2.txt" };
-        WordCount wordCount = new WordCount(2, filenames);
+        String[] filenames = { "simple.txt", "random.txt" };
+        WordCount wordCount = new WordCount(1, filenames);
         System.out.println("starting");
         wordCount.run();
     }
@@ -94,7 +95,7 @@ public class WordCount implements Master {
         processes.add(process);
     }
 
-    public void counter() {
+    public HashMap<String, Integer> counter() {
         try {
 
             HashMap<String, Integer> map1 = new HashMap<String, Integer>();
@@ -120,17 +121,18 @@ public class WordCount implements Master {
             }
 
             BufferedWriter writer = new BufferedWriter(new FileWriter("temp/result.txt"));
-            // map.forEach((key, value) -> System.out.println(key + ":" + value));
             for (String key : map1.keySet()) {
                 writer.write(key + ":" + map1.get(key) + "\n");
                 writer.flush();
-                // dos.writeUTF(key + ":" + map.get(key))
             }
             writer.close();
+            return map1;
 
         } catch (Exception e) {
             e.printStackTrace();
+            return null;
         }
+
     }
 
     private static String output(InputStream inputStream) throws IOException {
@@ -152,11 +154,11 @@ public class WordCount implements Master {
 
 class MasterServer extends Thread {
     Integer workerNum;
-    Queue<Integer> inputQueue;
-    Dictionary<Integer, ArrayList<Integer>> clientWorkDictionary;
+    Queue<String> inputQueue;
+    Dictionary<Integer, ArrayList<String>> clientWorkDictionary;
 
-    public MasterServer(Integer workers, Queue<Integer> inputQueue,
-            Dictionary<Integer, ArrayList<Integer>> clientWorkDictionary) {
+    public MasterServer(Integer workers, Queue<String> inputQueue,
+            Dictionary<Integer, ArrayList<String>> clientWorkDictionary) {
         this.workerNum = workers;
         this.inputQueue = inputQueue;
         this.clientWorkDictionary = clientWorkDictionary;
