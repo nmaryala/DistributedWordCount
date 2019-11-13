@@ -19,7 +19,7 @@ public class Client
 			InetAddress ip = InetAddress.getByName("localhost"); 
 	
 			// establish the connection with server port 5056 
-			Socket s = new Socket(ip, 5056); 
+			Socket s = new Socket(ip, 5011); 
 	
 			// obtaining input and out streams 
 			DataInputStream dis = new DataInputStream(s.getInputStream()); 
@@ -38,7 +38,6 @@ public class Client
 				String currentLine = reader.readLine();
 				while (currentLine != null) {
 					builder.append(currentLine);
-					builder.append(" ");
 			        currentLine = reader.readLine();
 			    }
 			    reader.close();
@@ -47,13 +46,17 @@ public class Client
 				String[] result = fileContent.split(" ");
 				Map<String, Integer> map = new HashMap<String, Integer> ();
 				for (String t:result) {   
-				    if (!map.containsKey(t)) {  // first time we've seen this string
+					if( t != ""){
+					if (!map.containsKey(t)) {  // first time we've seen this string
 				      map.put(t, 1);
 				    }
 				    else {
 				      int count = map.get(t);
 				      map.put(t, count + 1);
 				    }
+
+					}
+
 				 }
 				BufferedWriter writer = new BufferedWriter(new FileWriter("temp/immediate/count_" + masterResponse));
 				//map.forEach((key, value) -> System.out.println(key + ":" + value));
