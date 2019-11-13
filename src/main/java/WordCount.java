@@ -95,7 +95,7 @@ public class WordCount implements Master {
         processes.add(process);
     }
 
-    public HashMap<String, Integer> counter() {
+    public void counter() {
         try {
 
             HashMap<String, Integer> map1 = new HashMap<String, Integer>();
@@ -119,21 +119,43 @@ public class WordCount implements Master {
 
                 reader1.close();
             }
-
+            HashMap<String, Integer> hm1 = sortByValue(map1);
+            
             BufferedWriter writer = new BufferedWriter(new FileWriter("temp/result.txt"));
-            for (String key : map1.keySet()) {
-                writer.write(key + ":" + map1.get(key) + "\n");
+            // map.forEach((key, value) -> System.out.println(key + ":" + value));
+            for (String key : hm1.keySet()) {
+                writer.write(hm1.get(key) + ":" + key + "\n");
                 writer.flush();
+                // dos.writeUTF(key + ":" + map.get(key))
             }
             writer.close();
-            return map1;
 
         } catch (Exception e) {
             e.printStackTrace();
-            return null;
         }
-
     }
+    public static HashMap<String, Integer> sortByValue(HashMap<String, Integer> hm) 
+    { 
+        // Create a list from elements of HashMap 
+        List<Map.Entry<String, Integer> > list = 
+               new LinkedList<Map.Entry<String, Integer> >(hm.entrySet()); 
+  
+        // Sort the list 
+        Collections.sort(list, new Comparator<Map.Entry<String, Integer> >() { 
+            public int compare(Map.Entry<String, Integer> o1,  
+                               Map.Entry<String, Integer> o2) 
+            { 
+                return (o2.getValue()).compareTo(o1.getValue()); 
+            } 
+        }); 
+          
+        // put data from sorted list to hashmap  
+        HashMap<String, Integer> temp = new LinkedHashMap<String, Integer>(); 
+        for (Map.Entry<String, Integer> aa : list) { 
+            temp.put(aa.getKey(), aa.getValue()); 
+        } 
+        return temp; 
+    } 
 
     private static String output(InputStream inputStream) throws IOException {
         StringBuilder sb = new StringBuilder();
@@ -170,7 +192,7 @@ class MasterServer extends Thread {
             // running infinite loop for getting
             // client request
             // server is listening on port 5056
-            ServerSocket ss = new ServerSocket(5056);
+            ServerSocket ss = new ServerSocket(5012);
             for (Integer i = 1; i <= this.workerNum; i++) {
                 Socket s = null;
 
