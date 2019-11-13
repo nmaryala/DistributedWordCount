@@ -125,7 +125,7 @@ public class WordCount implements Master {
             BufferedWriter writer = new BufferedWriter(new FileWriter("temp/result.txt"));
             // map.forEach((key, value) -> System.out.println(key + ":" + value));
             
-            PrintStream out = new PrintStream(System.out);
+            PrintStream out =  new PrintStream(new FileOutputStream("temp/Results.txt"));
             this.setOutputStream(out);
             for (String key : hm1.keySet()) {
                 writer.write(hm1.get(key) + ":" + key + "\n");
