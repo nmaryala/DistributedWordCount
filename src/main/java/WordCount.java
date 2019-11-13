@@ -16,6 +16,7 @@ public class WordCount implements Master {
     Dictionary<Integer, ArrayList<String>> clientWorkDictionary = new Hashtable();
     Integer currentCount;
     PrintStream printStream;
+    OutputStream fout;
 
     public WordCount(int workerNum, String[] filenames) throws IOException {
         this.workerNum = workerNum;
@@ -123,12 +124,19 @@ public class WordCount implements Master {
             
             BufferedWriter writer = new BufferedWriter(new FileWriter("temp/result.txt"));
             // map.forEach((key, value) -> System.out.println(key + ":" + value));
+            
+            PrintStream out = new PrintStream(System.out);
+            this.setOutputStream(out);
             for (String key : hm1.keySet()) {
                 writer.write(hm1.get(key) + ":" + key + "\n");
+                byte[] byteData = (hm1.get(key) + ":" + key + "\n").getBytes();
+                this.printStream.write(byteData);
+                printStream.flush();
                 writer.flush();
                 // dos.writeUTF(key + ":" + map.get(key))
             }
             writer.close();
+
 
         } catch (Exception e) {
             e.printStackTrace();
