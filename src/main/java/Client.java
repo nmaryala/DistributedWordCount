@@ -12,8 +12,7 @@ public class Client
 	{ 
 		try
 		{ 
-			System.out.println("hey nikhil");
-			Scanner scn = new Scanner(System.in); 
+			System.out.println("Worker started");
 			
 			// getting localhost ip 
 			InetAddress ip = InetAddress.getByName("localhost"); 
@@ -25,6 +24,9 @@ public class Client
 			DataInputStream dis = new DataInputStream(s.getInputStream()); 
 			DataOutputStream dos = new DataOutputStream(s.getOutputStream()); 
 	
+			Thread heartThread = new Heartbeat(dos);
+            heartThread.start();
+
 			// the following loop performs the exchange of 
 			// information between client and client handler 
 			while (true)
@@ -59,7 +61,6 @@ public class Client
 
 				 }
 				BufferedWriter writer = new BufferedWriter(new FileWriter("temp/immediate/count_" + masterResponse));
-				//map.forEach((key, value) -> System.out.println(key + ":" + value));
 				for (String key : map.keySet()) {
 			        writer.write(key + ":" + map.get(key));
 			        writer.newLine();

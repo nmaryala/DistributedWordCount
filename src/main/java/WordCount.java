@@ -26,17 +26,17 @@ public class WordCount implements Master {
         for (Integer i = 0; i < filenames.length; i++) {
             this.inputQueue.add(filenames[i]);
         }
-    }
+        FileOutputStream fout=new FileOutputStream("temp/result.txt");
+        setOutputStream(new PrintStream(fout));
+        }
 
     public void setOutputStream(PrintStream out) {
         this.printStream = out;
     }
 
     public static void main(String[] args) throws Exception {
-        System.out.println("started");
         String[] filenames = { "simple.txt", "random.txt" };
         WordCount wordCount = new WordCount(1, filenames);
-        System.out.println("starting");
         wordCount.run();
     }
 
@@ -50,39 +50,34 @@ public class WordCount implements Master {
 
     public void run() {
         try {
-            // create a new thread object
-            try {
-                Thread t = new MasterServer(this.workerNum, this.inputQueue, this.clientWorkDictionary);
-                t.start();
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
+            System.out.println("Hosting Master server......");
+            // create a new Master Server thread to accept client request
+            Thread t = new MasterServer(this.workerNum, this.inputQueue, this.clientWorkDictionary);
+            t.start();
+            System.out.println("Master server hosted !!");
 
-            ProcessBuilder pb;
             for (Integer i = 1; i <= this.workerNum; i++) {
+                System.out.println("Creating worker:"+i);
                 createWorker();
+                System.out.println("Worker:"+i+" created successfully !!");
             }
 
             for (Integer i = 1; i <= this.workerNum; i++) {
-                System.out.println("Echo Output:\n" + output(processes.get(i - 1).getInputStream()));
+                System.out.println("Worker" + i + "\tOutput:\n" + output(processes.get(i - 1).getInputStream()));
             }
 
-            try {
-                int exitCode = processes.get(0).waitFor();
-                if (exitCode != 0) {
-                    System.out.println("\nExited with error code : " + exitCode);
-                }
-            } catch (Exception e) {
-                e.printStackTrace();
-                }
-            //this.printStream.println("Omar");
-            //counter();
+            int exitCode = processes.get(0).waitFor();
+            if (exitCode != 0) {
+                System.out.println("Worker 0 exited with error code : " + exitCode);
+            }
+
+            counter();
 
         } catch (Exception e) {
             e.printStackTrace();
         }
 
-        System.out.println("nikhil");
+        System.out.println("All done !!");
     }
 
     public Collection<Process> getActiveProcess() {
@@ -96,7 +91,7 @@ public class WordCount implements Master {
         processes.add(process);
     }
 
-    public void counter() {
+    private void counter() {
         try {
 
             HashMap<String, Integer> map1 = new HashMap<String, Integer>();
@@ -122,11 +117,6 @@ public class WordCount implements Master {
             }
             HashMap<String, Integer> hm1 = sortByValue(map1);
             
-            //BufferedWriter writer = new BufferedWriter(new FileWriter("temp/result.txt"));
-            // map.forEach((key, value) -> System.out.println(key + ":" + value));
-            
-            //PrintStream out =  new PrintStream(System.out);
-            //this.setOutputStream(out);
             for (String key : hm1.keySet()) {
                 //writer.write(hm1.get(key) + ":" + key);
                 
@@ -135,14 +125,14 @@ public class WordCount implements Master {
                 //writer.flush();
                 // dos.writeUTF(key + ":" + map.get(key))
             }
-            //cwriter.close();
-
+ 
 
         } catch (Exception e) {
             e.printStackTrace();
         }
     }
-    public static HashMap<String, Integer> sortByValue(HashMap<String, Integer> hm) 
+
+    private static HashMap<String, Integer> sortByValue(HashMap<String, Integer> hm) 
     { 
         // Create a list from elements of HashMap 
         List<Map.Entry<String, Integer> > list = 
@@ -182,55 +172,3 @@ public class WordCount implements Master {
 
 }
 
-class MasterServer extends Thread {
-    Integer workerNum;
-    Queue<String> inputQueue;
-    Dictionary<Integer, ArrayList<String>> clientWorkDictionary;
-
-    public MasterServer(Integer workers, Queue<String> inputQueue,
-            Dictionary<Integer, ArrayList<String>> clientWorkDictionary) {
-        this.workerNum = workers;
-        this.inputQueue = inputQueue;
-        this.clientWorkDictionary = clientWorkDictionary;
-    }
-
-    @Override
-    public void run() {
-        try {
-            // running infinite loop for getting
-            // client request
-            // server is listening on port 5056
-            ServerSocket ss = new ServerSocket(5300);
-            for (Integer i = 1; i <= this.workerNum; i++) {
-                Socket s = null;
-
-                try {
-                    // socket object to receive incoming client requests
-                    s = ss.accept();
-
-                    System.out.println("A new client is connected : " + s);
-
-                    // obtaining input and out streams
-                    DataInputStream dis = new DataInputStream(s.getInputStream());
-                    DataOutputStream dos = new DataOutputStream(s.getOutputStream());
-
-                    System.out.println("Assigning new thread for this client");
-
-                    // create a new thread object
-                    Thread t = new ClientHandler(s, dis, dos, i, inputQueue, clientWorkDictionary);
-
-                    // Invoking the start() method
-                    t.start();
-
-                } catch (Exception e) {
-                    s.close();
-                    // e.printStackTrace();
-                }
-            }
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-
-    }
-
-}
