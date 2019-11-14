@@ -33,6 +33,7 @@ class MasterServer extends Thread {
                 try {
                     // socket object to receive incoming client requests
                     s = ss.accept();
+                    s.setSoTimeout(3000);
 
                     System.out.println("A new client is connected : " + s);
 

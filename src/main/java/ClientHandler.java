@@ -79,9 +79,14 @@ class ClientHandler extends Thread
 					currentFileName = null;
 				}
 				
-			} catch (IOException e) { 
-				// e.printStackTrace(); 
+			}
+			catch(SocketTimeoutException ex){
+				this.inputQueue.add(currentFileName);
+				currentFileName = null;
 			} 
+			catch (IOException e) { 
+				// e.printStackTrace(); 
+			}
 		} 
 		
 	} 
