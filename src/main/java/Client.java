@@ -19,7 +19,7 @@ public class Client
 			InetAddress ip = InetAddress.getByName("localhost"); 
 	
 			// establish the connection with server port 5056 
-			Socket s = new Socket(ip, 5011); 
+			Socket s = new Socket(ip, 5300); 
 	
 			// obtaining input and out streams 
 			DataInputStream dis = new DataInputStream(s.getInputStream()); 
@@ -37,13 +37,13 @@ public class Client
 				StringBuilder builder = new StringBuilder();
 				String currentLine = reader.readLine();
 				while (currentLine != null) {
-					builder.append(currentLine);
+					builder.append(currentLine+" ");
 			        currentLine = reader.readLine();
 			    }
 			    reader.close();
 
 				String fileContent = builder.toString();
-				String[] result = fileContent.split(" ");
+				String[] result = fileContent.split("\\s+");
 				Map<String, Integer> map = new HashMap<String, Integer> ();
 				for (String t:result) {   
 					if( t != ""){

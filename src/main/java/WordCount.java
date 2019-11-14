@@ -74,9 +74,9 @@ public class WordCount implements Master {
                 }
             } catch (Exception e) {
                 e.printStackTrace();
-            }
-
-            counter();
+                }
+            //this.printStream.println("Omar");
+            //counter();
 
         } catch (Exception e) {
             e.printStackTrace();
@@ -122,20 +122,20 @@ public class WordCount implements Master {
             }
             HashMap<String, Integer> hm1 = sortByValue(map1);
             
-            BufferedWriter writer = new BufferedWriter(new FileWriter("temp/result.txt"));
+            //BufferedWriter writer = new BufferedWriter(new FileWriter("temp/result.txt"));
             // map.forEach((key, value) -> System.out.println(key + ":" + value));
             
-            PrintStream out =  new PrintStream(new FileOutputStream("temp/Results.txt"));
-            this.setOutputStream(out);
+            //PrintStream out =  new PrintStream(System.out);
+            //this.setOutputStream(out);
             for (String key : hm1.keySet()) {
-                writer.write(hm1.get(key) + ":" + key + "\n");
-                byte[] byteData = (hm1.get(key) + ":" + key + "\n").getBytes();
-                this.printStream.write(byteData);
+                //writer.write(hm1.get(key) + ":" + key);
+                
+                this.printStream.println(hm1.get(key) + ":" + key );
                 printStream.flush();
-                writer.flush();
+                //writer.flush();
                 // dos.writeUTF(key + ":" + map.get(key))
             }
-            writer.close();
+            //cwriter.close();
 
 
         } catch (Exception e) {
@@ -200,7 +200,7 @@ class MasterServer extends Thread {
             // running infinite loop for getting
             // client request
             // server is listening on port 5056
-            ServerSocket ss = new ServerSocket(5012);
+            ServerSocket ss = new ServerSocket(5300);
             for (Integer i = 1; i <= this.workerNum; i++) {
                 Socket s = null;
 
