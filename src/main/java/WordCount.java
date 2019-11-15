@@ -1,12 +1,8 @@
 import java.io.IOException;
 import java.io.PrintStream;
-import java.util.Collection;
-import java.util.LinkedList;
 import java.io.*;
 import java.util.*;
 import java.net.*;
-import java.util.LinkedList;
-import java.util.Queue;
 
 public class WordCount implements Master {
     ArrayList<Process> processes;
@@ -17,6 +13,7 @@ public class WordCount implements Master {
     Integer currentCount;
     PrintStream printStream;
     OutputStream fout;
+    ArrayList<Integer> ports = new ArrayList<Integer>();
 
     public WordCount(int workerNum, String[] filenames) throws IOException {
         this.workerNum = workerNum;
@@ -26,6 +23,8 @@ public class WordCount implements Master {
         for (Integer i = 0; i < filenames.length; i++) {
             this.inputQueue.add(filenames[i]);
         }
+
+        //Comment the below part before running tests
         FileOutputStream fout=new FileOutputStream("temp/result.txt");
         setOutputStream(new PrintStream(fout));
         }
@@ -35,7 +34,7 @@ public class WordCount implements Master {
     }
 
     public static void main(String[] args) throws Exception {
-        String[] filenames = { "simple.txt", "random.txt" };
+        String[] filenames = { "../../test/resources/simple.txt", "../../test/resources/random.txt" };
         WordCount wordCount = new WordCount(1, filenames);
         wordCount.run();
     }
@@ -52,8 +51,9 @@ public class WordCount implements Master {
         try {
             System.out.println("Hosting Master server......");
             // create a new Master Server thread to accept client request
-            Thread t = new MasterServer(this.workerNum, this.inputQueue, this.clientWorkDictionary);
+            Thread t = new MasterServer(this.workerNum, this.inputQueue, this.clientWorkDictionary, this.ports);
             t.start();
+            Thread.sleep(100);
             System.out.println("Master server hosted !!");
 
             for (Integer i = 1; i <= this.workerNum; i++) {
@@ -71,6 +71,7 @@ public class WordCount implements Master {
                 System.out.println("Worker 0 exited with error code : " + exitCode);
             }
 
+            // printStream.println("Nikhjil");
             counter();
 
         } catch (Exception e) {
@@ -86,7 +87,7 @@ public class WordCount implements Master {
 
     public void createWorker() throws IOException {
         ProcessBuilder pb;
-        pb = new ProcessBuilder("java", "Client", this.currentCount.toString());
+        pb = new ProcessBuilder("java", "Client", ports.get(0).toString());
         Process process = pb.start();
         processes.add(process);
     }
@@ -98,7 +99,8 @@ public class WordCount implements Master {
 
             String line;
             final File folder = new File("temp/immediate");
-            List<String> filenames = listFilesForFolder(folder);
+            List<String> filenames = new ArrayList<>();
+            filenames.add("count_1.txt");
             for (int i = 0; i < filenames.size(); i++) {
                 BufferedReader reader1 = new BufferedReader(new FileReader(filenames.get(i)));
                 while ((line = reader1.readLine()) != null) {
@@ -116,15 +118,19 @@ public class WordCount implements Master {
                 reader1.close();
             }
             HashMap<String, Integer> hm1 = sortByValue(map1);
+
+            System.out.println("Came til here");
             
             for (String key : hm1.keySet()) {
                 //writer.write(hm1.get(key) + ":" + key);
                 
                 this.printStream.println(hm1.get(key) + ":" + key );
-                printStream.flush();
+                this.printStream.flush();
                 //writer.flush();
                 // dos.writeUTF(key + ":" + map.get(key))
             }
+
+            this.printStream.close();
  
 
         } catch (Exception e) {

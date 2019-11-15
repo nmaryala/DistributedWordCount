@@ -12,12 +12,14 @@ class MasterServer extends Thread {
     Integer workerNum;
     Queue<String> inputQueue;
     Dictionary<Integer, ArrayList<String>> clientWorkDictionary;
+    ArrayList<Integer> ports;
 
     public MasterServer(Integer workers, Queue<String> inputQueue,
-            Dictionary<Integer, ArrayList<String>> clientWorkDictionary) {
+            Dictionary<Integer, ArrayList<String>> clientWorkDictionary, ArrayList<Integer> ports) {
         this.workerNum = workers;
         this.inputQueue = inputQueue;
         this.clientWorkDictionary = clientWorkDictionary;
+        this.ports = ports;
     }
 
     @Override
@@ -26,7 +28,8 @@ class MasterServer extends Thread {
             // running infinite loop for getting
             // client request
             // server is listening on port 5056
-            ServerSocket ss = new ServerSocket(5300);
+            ServerSocket ss = new ServerSocket(0);
+            ports.add(ss.getLocalPort());
             for (Integer i = 1; i <= this.workerNum; i++) {
                 Socket s = null;
 

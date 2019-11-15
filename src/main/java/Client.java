@@ -15,10 +15,11 @@ public class Client
 			System.out.println("Worker started");
 			
 			// getting localhost ip 
-			InetAddress ip = InetAddress.getByName("localhost"); 
+			InetAddress ip = InetAddress.getByName("localhost");
+			int port = Integer.valueOf(args[0]);
 	
 			// establish the connection with server port 5056 
-			Socket s = new Socket(ip, 5300); 
+			Socket s = new Socket(ip, port); 
 	
 			// obtaining input and out streams 
 			DataInputStream dis = new DataInputStream(s.getInputStream()); 
@@ -34,8 +35,8 @@ public class Client
 				String masterResponse = dis.readUTF();
 				System.out.println("Master sent the file name "+ masterResponse);
 				
-				String filename = "../../test/resources/"+masterResponse;
-				BufferedReader reader = new BufferedReader(new FileReader(filename));
+				// String filename = "../../test/resources/"+masterResponse;
+				BufferedReader reader = new BufferedReader(new FileReader(masterResponse));
 				StringBuilder builder = new StringBuilder();
 				String currentLine = reader.readLine();
 				while (currentLine != null) {
@@ -60,7 +61,7 @@ public class Client
 					}
 
 				 }
-				BufferedWriter writer = new BufferedWriter(new FileWriter("temp/immediate/count_" + masterResponse));
+				BufferedWriter writer = new BufferedWriter(new FileWriter("count_1.txt", true));
 				for (String key : map.keySet()) {
 			        writer.write(key + ":" + map.get(key));
 			        writer.newLine();
