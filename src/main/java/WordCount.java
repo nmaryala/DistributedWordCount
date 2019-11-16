@@ -25,7 +25,9 @@ public class WordCount implements Master {
         }
 
         //Comment the below part before running tests
-        FileOutputStream fout=new FileOutputStream("temp/result.txt");
+
+        // String outp = TestUtil.class.getReferenceOutput();
+        FileOutputStream fout=new FileOutputStream("result.txt", false);
         setOutputStream(new PrintStream(fout));
         }
 
@@ -68,7 +70,8 @@ public class WordCount implements Master {
 
             int exitCode = processes.get(0).waitFor();
             if (exitCode != 0) {
-                System.out.println("Worker 0 exited with error code : " + exitCode);
+                System.out.println();
+                System.out.println("Worker 0 exited with error code : " + exitCode + output(processes.get(0).getErrorStream()));
             }
 
             // printStream.println("Nikhjil");
@@ -87,8 +90,13 @@ public class WordCount implements Master {
 
     public void createWorker() throws IOException {
         ProcessBuilder pb;
-        pb = new ProcessBuilder("java", "Client", ports.get(0).toString());
-        Process process = pb.start();
+        ProcessBuilder processBuilder = new ProcessBuilder();
+
+                    
+        String currPath2 =  System.getProperty("user.dir");
+        processBuilder.command("java", "-cp", currPath2+"/src/main/java/", currPath2+"/src/main/java/Client.java", Integer.toString(ports.get(0)));
+// x        processBuilder.inheritIO();
+        Process process = processBuilder.start();
         processes.add(process);
     }
 
@@ -98,7 +106,7 @@ public class WordCount implements Master {
             HashMap<String, Integer> map1 = new HashMap<String, Integer>();
 
             String line;
-            final File folder = new File("temp/immediate");
+            // final File folder = new File("temp/immediate");
             List<String> filenames = new ArrayList<>();
             filenames.add("count_1.txt");
             for (int i = 0; i < filenames.size(); i++) {
@@ -124,7 +132,7 @@ public class WordCount implements Master {
             for (String key : hm1.keySet()) {
                 //writer.write(hm1.get(key) + ":" + key);
                 
-                this.printStream.println(hm1.get(key) + ":" + key );
+                this.printStream.println(hm1.get(key) + " : " + key );
                 this.printStream.flush();
                 //writer.flush();
                 // dos.writeUTF(key + ":" + map.get(key))
@@ -149,7 +157,11 @@ public class WordCount implements Master {
             public int compare(Map.Entry<String, Integer> o1,  
                                Map.Entry<String, Integer> o2) 
             { 
-                return (o2.getValue()).compareTo(o1.getValue()); 
+                if(o1.getValue().equals(o2.getValue())) {
+            		return (o1.getKey()).compareTo(o2.getKey());
+            	}else {
+            		return (o2.getValue()).compareTo(o1.getValue());
+            	}
             } 
         }); 
           

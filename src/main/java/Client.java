@@ -6,7 +6,7 @@ import java.net.*;
 import java.util.*; 
 
 // Client class 
-public class Client 
+public class Client
 { 
 	public static void main(String[] args) throws IOException 
 	{ 
@@ -25,8 +25,8 @@ public class Client
 			DataInputStream dis = new DataInputStream(s.getInputStream()); 
 			DataOutputStream dos = new DataOutputStream(s.getOutputStream()); 
 	
-			Thread heartThread = new Heartbeat(dos);
-            heartThread.start();
+			// Thread heartThread = new Heartbeat(dos);
+            // heartThread.start();
 
 			// the following loop performs the exchange of 
 			// information between client and client handler 
@@ -61,7 +61,7 @@ public class Client
 					}
 
 				 }
-				BufferedWriter writer = new BufferedWriter(new FileWriter("count_1.txt", true));
+				BufferedWriter writer = new BufferedWriter(new FileWriter("count_1.txt"));
 				for (String key : map.keySet()) {
 			        writer.write(key + ":" + map.get(key));
 			        writer.newLine();
