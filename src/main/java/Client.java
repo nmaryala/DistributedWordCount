@@ -25,8 +25,8 @@ public class Client
 			DataInputStream dis = new DataInputStream(s.getInputStream()); 
 			DataOutputStream dos = new DataOutputStream(s.getOutputStream()); 
 	
-			// Thread heartThread = new Heartbeat(dos);
-            // heartThread.start();
+			Thread heartThread = new Heartbeat(dos);
+            heartThread.start();
 
 			// the following loop performs the exchange of 
 			// information between client and client handler 
@@ -87,3 +87,25 @@ public class Client
 		} 
 	} 
 } 
+
+class Heartbeat extends Thread{
+    DataOutputStream dos;
+
+    public Heartbeat(DataOutputStream dos){
+        this.dos = dos;
+    }
+
+    @Override
+    public void run() {
+		try
+		{ 
+            while(true){
+                this.dos.writeUTF("Heartbeat");
+                Thread.sleep(3000);     
+            }
+        }
+        catch(Exception e){
+            e.printStackTrace();
+        }
+    }
+}

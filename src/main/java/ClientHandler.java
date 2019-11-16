@@ -61,11 +61,11 @@ class ClientHandler extends Thread
 				// receive response from the client 
 				received = dis.readUTF(); 
 
-				// while(received.equals("Heartbeat")){
-				// 	System.out.println("Heartbeat received from Client:"+ s);
-				// 	// Thread.sleep(3000);
-				// 	received = dis.readUTF();
-				// }
+				while(received.equals("Heartbeat")){
+					System.out.println("Heartbeat received from Client:"+ s);
+					// Thread.sleep(3000);
+					received = dis.readUTF();
+				}
 				
 				//If client succeeds, give it next file name
 				if(received.equals("Done")) 
