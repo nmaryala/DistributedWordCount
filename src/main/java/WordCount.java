@@ -89,13 +89,10 @@ public class WordCount implements Master {
     }
 
     public void createWorker() throws IOException {
-        ProcessBuilder pb;
-        ProcessBuilder processBuilder = new ProcessBuilder();
-
-                    
+        ProcessBuilder processBuilder = new ProcessBuilder();                    
         String currPath2 =  System.getProperty("user.dir");
-        processBuilder.command("java", "-cp", currPath2+"/src/main/java/", currPath2+"/src/main/java/Client.java", Integer.toString(ports.get(0)));
-// x        processBuilder.inheritIO();
+        // processBuilder.command("java", "-cp", currPath2+"/src/main/java/", currPath2+"/src/main/java/Client.java", Integer.toString(ports.get(0)));
+        processBuilder.command("java", "-cp", "/home/nikhil/Desktop/git_workspace/Systems/project-2-group-8/src/main/java/", "/home/nikhil/Desktop/git_workspace/Systems/project-2-group-8/src/main/java/Client.java", Integer.toString(ports.get(0)));
         Process process = processBuilder.start();
         processes.add(process);
     }
@@ -106,11 +103,8 @@ public class WordCount implements Master {
             HashMap<String, Integer> map1 = new HashMap<String, Integer>();
 
             String line;
-            // final File folder = new File("temp/immediate");
-            List<String> filenames = new ArrayList<>();
-            filenames.add("count_1.txt");
-            for (int i = 0; i < filenames.size(); i++) {
-                BufferedReader reader1 = new BufferedReader(new FileReader(filenames.get(i)));
+            for (int i = 0; i < filenames.length; i++) {
+                BufferedReader reader1 = new BufferedReader(new FileReader(filenames[i].replace(".txt", "_.txt")));
                 while ((line = reader1.readLine()) != null) {
                     String[] parts = line.split(":", 2);
                     if (!map1.containsKey(parts[0])) {

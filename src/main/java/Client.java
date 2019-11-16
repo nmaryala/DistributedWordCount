@@ -34,8 +34,8 @@ public class Client
 			{ 
 				String masterResponse = dis.readUTF();
 				System.out.println("Master sent the file name "+ masterResponse);
+				String fileOutName = masterResponse.replace(".txt", "_.txt");
 				
-				// String filename = "../../test/resources/"+masterResponse;
 				BufferedReader reader = new BufferedReader(new FileReader(masterResponse));
 				StringBuilder builder = new StringBuilder();
 				String currentLine = reader.readLine();
@@ -61,7 +61,7 @@ public class Client
 					}
 
 				 }
-				BufferedWriter writer = new BufferedWriter(new FileWriter("count_1.txt"));
+				BufferedWriter writer = new BufferedWriter(new FileWriter(fileOutName));
 				for (String key : map.keySet()) {
 			        writer.write(key + ":" + map.get(key));
 			        writer.newLine();
