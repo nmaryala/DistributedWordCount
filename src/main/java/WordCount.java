@@ -2,6 +2,8 @@ import java.io.IOException;
 import java.io.PrintStream;
 import java.io.*;
 import java.util.*;
+import java.util.concurrent.TimeUnit ;
+
 import java.net.*;
 
 public class WordCount implements Master {
@@ -38,8 +40,8 @@ public class WordCount implements Master {
     }
 
     public static void main(String[] args) throws Exception {
-        String[] filenames = { "../../test/resources/simple.txt", "../../test/resources/random.txt" };
-        WordCount wordCount = new WordCount(2, filenames);
+        String[] filenames = { "../../test/resources/king-james-version-bible.txt"};
+        WordCount wordCount = new WordCount(1, filenames);
         wordCount.run();
     }
 
@@ -63,23 +65,44 @@ public class WordCount implements Master {
             System.out.println("Master server hosted !!");
 
             for (Integer i = 1; i <= this.workerNum; i++) {
-                System.out.println("Creating worker:"+i);
+                // if(i != 1){
+            	System.out.println("Creating worker:"+i);
                 createWorker();
                 System.out.println("Worker:"+i+" created successfully !!");
+                	
+                // } else {
+               	// 	    System.out.println("Creating worker 2:"+i);
+                // createWorker2();
+                // System.out.println("Worker:"+i+" created successfully !!");
+                	
+                // }
             }
 
 
             Thread ft = new FaultTolerance(this.faultQueue, this.ports, this.processes, this.allQueue);
             ft.start();
-            
+            // System.out.println("M1");
 
             while (this.processes.size() > 0){
+            	System.out.println(this.processes.size() );
                 System.out.println("Worker \tOutput:\n" + output(processes.get(0).getInputStream()));
                 int exitCode = processes.get(0).waitFor();
+                
+                // System.out.println("M2");
                 if (exitCode != 0) {
+                    if(exitCode == 137){
+
+                System.err.println("dEATH");
+				// this.inputQueue.add(currentFileName);
+				// System.out.println(this.inputQueue.size());
+				// currentFileName = null;
+				}
                     System.out.println("Worker exited with error code : " + exitCode + output(processes.get(0).getErrorStream()));
-                }
+                	System.out.println("M3");
+                }  
+                // System.out.println("M4");
                 this.processes.remove(0);
+                // System.out.println("M5");
             }
 
             
@@ -88,6 +111,7 @@ public class WordCount implements Master {
             counter();
 
         } catch (Exception e) {
+        	System.out.println("F3");
             e.printStackTrace();
         }
 
@@ -102,13 +126,12 @@ public class WordCount implements Master {
     public void createWorker() throws IOException {
         ProcessBuilder processBuilder = new ProcessBuilder();
         String currPath2 =  System.getProperty("user.dir");
-        // processBuilder.command("java", "-cp", currPath2+"/src/main/java/", currPath2+"/src/main/java/Client.java", Integer.toString(ports.get(0)));
-        processBuilder.command("java", "-cp", "/home/nikhil/Desktop/git_workspace/Systems/project-2-group-8/src/main/java/", "/home/nikhil/Desktop/git_workspace/Systems/project-2-group-8/src/main/java/Client.java", Integer.toString(ports.get(0)));
+         processBuilder.command("java", "-cp", currPath2, currPath2+"/Client.java", Integer.toString(ports.get(0)));
+        //processBuilder.command("java", "-cp", "/home/nikhil/Desktop/git_workspace/Systems/project-2-group-8/src/main/java/", "/home/nikhil/Desktop/git_workspace/Systems/project-2-group-8/src/main/java/Client.java", Integer.toString(ports.get(0)));
         Process process = processBuilder.start();
         processes.add(process);
     }
-
-    private void counter() {
+     private void counter() {
         try {
 
             HashMap<String, Integer> map1 = new HashMap<String, Integer>();
@@ -117,9 +140,13 @@ public class WordCount implements Master {
             for (int i = 0; i < filenames.length; i++) {
                 BufferedReader reader1 = new BufferedReader(new FileReader(filenames[i].replace(".txt", "_.txt")));
                 while ((line = reader1.readLine()) != null) {
-                    String[] parts = line.split(":", 2);
+                    int index = line.lastIndexOf(":");
+
+                    String[] parts = {line.substring(0,index),line.substring(index+1)};
+
                     if (!map1.containsKey(parts[0])) {
                         String key = parts[0];
+
                         int value = Integer.parseInt(parts[1]);
                         map1.put(key, value);
                     } else {
@@ -136,7 +163,7 @@ public class WordCount implements Master {
             
             for (String key : hm1.keySet()) {
                 //writer.write(hm1.get(key) + ":" + key);
-                
+                System.out.println(hm1.get(key) + " : " + key );
                 this.printStream.println(hm1.get(key) + " : " + key );
                 this.printStream.flush();
                 //writer.flush();
@@ -147,6 +174,7 @@ public class WordCount implements Master {
  
 
         } catch (Exception e) {
+        	System.out.println("F1");
             e.printStackTrace();
         }
     }
@@ -226,6 +254,7 @@ class FaultTolerance  extends Thread{
             }    
         }
         catch(Exception ex){
+        	System.out.println("F2");
             ex.printStackTrace();
         }
     }
@@ -233,8 +262,8 @@ class FaultTolerance  extends Thread{
     public void createWorker() throws IOException {
         ProcessBuilder processBuilder = new ProcessBuilder();
         String currPath2 =  System.getProperty("user.dir");
-        // processBuilder.command("java", "-cp", currPath2+"/src/main/java/", currPath2+"/src/main/java/Client.java", Integer.toString(ports.get(0)));
-        processBuilder.command("java", "-cp", "/home/nikhil/Desktop/git_workspace/Systems/project-2-group-8/src/main/java/", "/home/nikhil/Desktop/git_workspace/Systems/project-2-group-8/src/main/java/Client.java", Integer.toString(ports.get(0)));
+        processBuilder.command("java", "-cp", currPath2, currPath2+"/Client.java", Integer.toString(ports.get(0)));
+        //processBuilder.command("java", "-cp", "/home/nikhil/Desktop/git_workspace/Systems/project-2-group-8/src/main/java/", "/home/nikhil/Desktop/git_workspace/Systems/project-2-group-8/src/main/java/Client.java", Integer.toString(ports.get(0)));
         Process process = processBuilder.start();
         processes.add(process);
     }

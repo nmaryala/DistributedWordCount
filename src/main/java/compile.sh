@@ -1,4 +1,6 @@
 rm *.txt
+rm *.class
+
 rm temp/*.txt
 rm temp/immediate/*.txt
 

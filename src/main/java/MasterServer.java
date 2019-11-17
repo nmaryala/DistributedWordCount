@@ -40,7 +40,7 @@ class MasterServer extends Thread {
                 try {
                     // socket object to receive incoming client requests
                     s = ss.accept();
-                    s.setSoTimeout(3000);
+                    s.setSoTimeout(3010);
 
                     System.out.println("A new client is connected : " + s);
 
@@ -100,7 +100,7 @@ class FaultHandler extends Thread {
             // server is listening on port 5056
 
             while(true){
-                // System.out.println("Ready to create if someone died");
+                
                 Thread.sleep(500);
 				// System.out.println("inputSize:"+ this.inputQueue.size());
 				// System.out.println("faultSize:"+ this.faultQueue.size());
@@ -133,12 +133,14 @@ class FaultHandler extends Thread {
                         this.faultQueue.poll();
 
                     } catch (Exception e) {
+
                         s.close();
                         e.printStackTrace();
                     }
                 }
             }
         } catch (Exception e) {
+
             e.printStackTrace();
         }
 

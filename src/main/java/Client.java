@@ -33,7 +33,13 @@ public class Client
 			while (true)
 			{ 
 				String masterResponse = dis.readUTF();
-				System.out.println("Master sent the file name "+ masterResponse);
+				System.out.println(masterResponse);
+
+				if(masterResponse.equals("over")){
+					break;
+				}
+
+				System.out.println("Master sent the file name good client"+ masterResponse);
 				String fileOutName = masterResponse.replace(".txt", "_.txt");
 				
 				BufferedReader reader = new BufferedReader(new FileReader(masterResponse));
@@ -65,18 +71,18 @@ public class Client
 				BufferedWriter writer = new BufferedWriter(new FileWriter(fileOutName));
 				for (String key : map.keySet()) {
 			        writer.write(key + ":" + map.get(key));
+			        			        System.out.println(key + ":" + map.get(key));
+
 			        writer.newLine();
 			        writer.flush();
 			    }
 				writer.close();
-				// Thread.sleep(50000);
+				//Thread.sleep(50000);
 
 
 				dos.writeUTF("Done");
 
-				if(masterResponse == "Over"){
-					break;
-				}
+				
 			} 
 			System.out.println("Closing this connection : " + s);
 			s.close(); 

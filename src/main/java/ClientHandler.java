@@ -43,13 +43,14 @@ class ClientHandler extends Thread
 			if (currentFileName == null){
 				try
 				{ 
+					this.dos.writeUTF("over");
 					// closing resources 
 					this.s.close();
 					this.dis.close(); 
 					this.dos.close(); 
 					
 				}catch(IOException e){ 
-					// e.printStackTrace(); 
+					 e.printStackTrace(); 
 				} 	
 				break;
 			}
@@ -68,7 +69,7 @@ class ClientHandler extends Thread
 					// Thread.sleep(3000);
 					received = dis.readUTF();
 				}
-				
+
 				//If client succeeds, give it next file name
 				if(received.equals("Done")) 
 				{
@@ -91,7 +92,7 @@ class ClientHandler extends Thread
 
 			} 
 			catch (IOException e) { 
-				// e.printStackTrace(); 
+					e.printStackTrace(); 
 			}
 		} 
 		
