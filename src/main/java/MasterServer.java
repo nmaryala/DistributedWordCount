@@ -101,7 +101,7 @@ class FaultHandler extends Thread {
 
             while(true){
                 
-                Thread.sleep(500);
+                Thread.sleep(200);
 				// System.out.println("inputSize:"+ this.inputQueue.size());
 				// System.out.println("faultSize:"+ this.faultQueue.size());
                 if (this.allQueue.size() != 0){
@@ -115,7 +115,7 @@ class FaultHandler extends Thread {
                     try {
                         // socket object to receive incoming client requests
                         s = ss.accept();
-                        s.setSoTimeout(3000);
+                        s.setSoTimeout(3010);
 
                         System.out.println("A new client is connected from fault tolerance : " + s);
 

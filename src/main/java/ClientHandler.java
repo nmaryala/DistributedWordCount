@@ -44,7 +44,8 @@ class ClientHandler extends Thread
 				try
 				{ 
 					this.dos.writeUTF("over");
-					// closing resources 
+					System.out.println("iDk");
+					/// closing resources 
 					this.s.close();
 					this.dis.close(); 
 					this.dos.close(); 
@@ -83,17 +84,32 @@ class ClientHandler extends Thread
 				}
 				
 			}
-			catch(SocketTimeoutException ex){
-				System.err.println("TIMEOUT HAPPENED");
-				this.inputQueue.add(currentFileName);
-				System.out.println(this.inputQueue.size());
-				currentFileName = null;
-				this.faultQueue.add(clientNumber);
-
-			} 
-			catch (IOException e) { 
-					e.printStackTrace(); 
+			catch(Exception e){
+			System.err.println("TIMEOUT HAPPENED");
+			this.inputQueue.add(currentFileName);
+			System.out.println(this.inputQueue.size());
+			currentFileName = null;
+			this.faultQueue.add(clientNumber);
 			}
+			// catch(SocketTimeoutException ex){
+			// 	System.err.println("TIMEOUT HAPPENED");
+			// 	this.inputQueue.add(currentFileName);
+			// 	System.out.println(this.inputQueue.size());
+			// 	currentFileName = null;
+			// 	this.faultQueue.add(clientNumber);
+
+			// } 
+
+
+			// catch (SocketException exy){
+			// 	System.err.println("TIMEOUT HAPPENED");
+			// 	this.inputQueue.add(currentFileName);
+			// 	System.out.println(this.inputQueue.size());
+			// 	currentFileName = null;
+			// 	this.faultQueue.add(clientNumber);			}
+			// catch (IOException e) { 
+			// 		e.printStackTrace(); 
+			// }
 		} 
 		
 	} 

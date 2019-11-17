@@ -71,13 +71,13 @@ public class Client
 				BufferedWriter writer = new BufferedWriter(new FileWriter(fileOutName));
 				for (String key : map.keySet()) {
 			        writer.write(key + ":" + map.get(key));
-			        			        System.out.println(key + ":" + map.get(key));
+			        			        //System.out.println(key + ":" + map.get(key));
 
 			        writer.newLine();
 			        writer.flush();
 			    }
 				writer.close();
-				//Thread.sleep(50000);
+				// Thread.sleep(30000);
 
 
 				dos.writeUTF("Done");

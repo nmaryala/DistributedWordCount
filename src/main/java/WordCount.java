@@ -40,8 +40,8 @@ public class WordCount implements Master {
     }
 
     public static void main(String[] args) throws Exception {
-        String[] filenames = { "../../test/resources/king-james-version-bible.txt"};
-        WordCount wordCount = new WordCount(1, filenames);
+        String[] filenames = { "../../test/resources/simple.txt"};
+        WordCount wordCount = new WordCount(6, filenames);
         wordCount.run();
     }
 
@@ -85,6 +85,7 @@ public class WordCount implements Master {
 
             while (this.processes.size() > 0){
             	System.out.println(this.processes.size() );
+                System.out.println(this.processes.get(0).pid());
                 System.out.println("Worker \tOutput:\n" + output(processes.get(0).getInputStream()));
                 int exitCode = processes.get(0).waitFor();
                 
@@ -240,7 +241,7 @@ class FaultTolerance  extends Thread{
     public void run() {
         try{
             while(true){
-                Thread.sleep(500);
+                Thread.sleep(1000);
                 // System.out.println("Entered creating new processes but dind't start yet");
 
                 if(this.allQueue.size() != 0){
@@ -248,7 +249,7 @@ class FaultTolerance  extends Thread{
                 }
 
                 for (Integer i = 1; i <= this.faultQueue.size(); i++) {
-                    System.out.println("creating new one");
+                    System.out.println("creating new one"+i);
                     createWorker();
                 }
             }    
