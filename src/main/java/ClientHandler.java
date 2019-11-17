@@ -11,17 +11,19 @@ class ClientHandler extends Thread
 	final Socket s; 
 	final int clientNumber;
 	Queue<String> inputQueue;
+	Queue<Integer> faultQueue;
 	Dictionary<Integer, ArrayList<String>> clientWorkDictionary;
 	
 
 	// Constructor 
-	public ClientHandler(Socket s, DataInputStream dis, DataOutputStream dos, int clientNumber, Queue<String> inputQueue, Dictionary<Integer, ArrayList<String>> clientWorkDictionary)
+	public ClientHandler(Socket s, DataInputStream dis, DataOutputStream dos, int clientNumber, Queue<String> inputQueue, Queue<Integer> faultQueue,Dictionary<Integer, ArrayList<String>> clientWorkDictionary)
 	{ 
 		this.s = s; 
 		this.dis = dis; 
 		this.dos = dos;
 		this.clientNumber = clientNumber;
 		this.inputQueue = inputQueue;
+		this.faultQueue = faultQueue;
 		this.clientWorkDictionary = clientWorkDictionary;
 	} 
 
@@ -83,6 +85,8 @@ class ClientHandler extends Thread
 			catch(SocketTimeoutException ex){
 				this.inputQueue.add(currentFileName);
 				currentFileName = null;
+				this.faultQueue.add(clientNumber);
+
 			} 
 			catch (IOException e) { 
 				// e.printStackTrace(); 

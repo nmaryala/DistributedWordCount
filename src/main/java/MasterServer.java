@@ -11,14 +11,16 @@ import java.util.Queue;
 class MasterServer extends Thread {
     Integer workerNum;
     Queue<String> inputQueue;
+    Queue<Integer> faultQueue;
     Dictionary<Integer, ArrayList<String>> clientWorkDictionary;
     ArrayList<Integer> ports;
 
-    public MasterServer(Integer workers, Queue<String> inputQueue,
+    public MasterServer(Integer workers, Queue<String> inputQueue, Queue<Integer> faultQueue,
             Dictionary<Integer, ArrayList<String>> clientWorkDictionary, ArrayList<Integer> ports) {
         this.workerNum = workers;
         this.inputQueue = inputQueue;
         this.clientWorkDictionary = clientWorkDictionary;
+        this.faultQueue = faultQueue;
         this.ports = ports;
     }
 
@@ -47,7 +49,7 @@ class MasterServer extends Thread {
                     System.out.println("Assigning new thread for this client");
 
                     // create a new thread object
-                    Thread t = new ClientHandler(s, dis, dos, i, inputQueue, clientWorkDictionary);
+                    Thread t = new ClientHandler(s, dis, dos, i, inputQueue, faultQueue,clientWorkDictionary);
 
                     // Invoking the start() method
                     t.start();

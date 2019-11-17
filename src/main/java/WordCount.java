@@ -9,6 +9,7 @@ public class WordCount implements Master {
     Integer workerNum;
     String[] filenames;
     Queue<String> inputQueue = new LinkedList<>();
+	Queue<Integer> faultQueue = new LinkedList<>();
     Dictionary<Integer, ArrayList<String>> clientWorkDictionary = new Hashtable();
     Integer currentCount;
     PrintStream printStream;
@@ -53,7 +54,9 @@ public class WordCount implements Master {
         try {
             System.out.println("Hosting Master server......");
             // create a new Master Server thread to accept client request
-            Thread t = new MasterServer(this.workerNum, this.inputQueue, this.clientWorkDictionary, this.ports);
+             Thread t = new MasterServer(this.workerNum, this.inputQueue, this.faultQueue,this.clientWorkDictionary,this.ports);
+
+
             t.start();
             Thread.sleep(100);
             System.out.println("Master server hosted !!");
@@ -91,8 +94,8 @@ public class WordCount implements Master {
     public void createWorker() throws IOException {
         ProcessBuilder processBuilder = new ProcessBuilder();                    
         String currPath2 =  System.getProperty("user.dir");
-        // processBuilder.command("java", "-cp", currPath2+"/src/main/java/", currPath2+"/src/main/java/Client.java", Integer.toString(ports.get(0)));
-        processBuilder.command("java", "-cp", "/home/nikhil/Desktop/git_workspace/Systems/project-2-group-8/src/main/java/", "/home/nikhil/Desktop/git_workspace/Systems/project-2-group-8/src/main/java/Client.java", Integer.toString(ports.get(0)));
+        processBuilder.command("java", "-cp", currPath2+"/src/main/java/", currPath2+"/src/main/java/Client.java", Integer.toString(ports.get(0)));
+        //processBuilder.command("java", "-cp", "/home/nikhil/Desktop/git_workspace/Systems/project-2-group-8/src/main/java/", "/home/nikhil/Desktop/git_workspace/Systems/project-2-group-8/src/main/java/Client.java", Integer.toString(ports.get(0)));
         Process process = processBuilder.start();
         processes.add(process);
     }
