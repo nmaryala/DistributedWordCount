@@ -38,7 +38,7 @@ public class WordCount implements Master {
 
     public static void main(String[] args) throws Exception {
         String[] filenames = { "../../test/resources/simple.txt", "../../test/resources/random.txt" };
-        WordCount wordCount = new WordCount(1, filenames);
+        WordCount wordCount = new WordCount(2, filenames);
         wordCount.run();
     }
 
@@ -74,7 +74,7 @@ public class WordCount implements Master {
             int exitCode = processes.get(0).waitFor();
             if (exitCode != 0) {
                 System.out.println();
-                System.out.println("Worker 0 exited with error code : " + exitCode + output(processes.get(0).getErrorStream()));
+                System.out.println("Worker 1 exited with error code : " + exitCode + output(processes.get(0).getErrorStream()));
             }
 
             // printStream.println("Nikhjil");
@@ -95,7 +95,7 @@ public class WordCount implements Master {
         ProcessBuilder processBuilder = new ProcessBuilder();                    
         String currPath2 =  System.getProperty("user.dir");
         processBuilder.command("java", "-cp", currPath2+"/src/main/java/", currPath2+"/src/main/java/Client.java", Integer.toString(ports.get(0)));
-        //processBuilder.command("java", "-cp", "/home/nikhil/Desktop/git_workspace/Systems/project-2-group-8/src/main/java/", "/home/nikhil/Desktop/git_workspace/Systems/project-2-group-8/src/main/java/Client.java", Integer.toString(ports.get(0)));
+        // processBuilder.command("java", "-cp", "/home/nikhil/Desktop/git_workspace/Systems/project-2-group-8/src/main/java/", "/home/nikhil/Desktop/git_workspace/Systems/project-2-group-8/src/main/java/Client.java", Integer.toString(ports.get(0)));
         Process process = processBuilder.start();
         processes.add(process);
     }
