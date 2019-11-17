@@ -14,14 +14,16 @@ class MasterServer extends Thread {
     Queue<Integer> faultQueue;
     Dictionary<Integer, ArrayList<String>> clientWorkDictionary;
     ArrayList<Integer> ports;
+    Queue<Boolean> allQueue;
 
     public MasterServer(Integer workers, Queue<String> inputQueue, Queue<Integer> faultQueue,
-            Dictionary<Integer, ArrayList<String>> clientWorkDictionary, ArrayList<Integer> ports) {
+            Dictionary<Integer, ArrayList<String>> clientWorkDictionary, ArrayList<Integer> ports, Queue<Boolean> allQueue) {
         this.workerNum = workers;
         this.inputQueue = inputQueue;
         this.clientWorkDictionary = clientWorkDictionary;
         this.faultQueue = faultQueue;
         this.ports = ports;
+        this.allQueue = allQueue;
     }
 
     @Override
@@ -56,11 +58,11 @@ class MasterServer extends Thread {
 
                 } catch (Exception e) {
                     s.close();
-                    // e.printStackTrace();
+                    e.printStackTrace();
                 }
             }
  
-            Thread t = new FaultHandler(inputQueue, faultQueue, clientWorkDictionary, this.ports, ss);
+            Thread t = new FaultHandler(inputQueue, faultQueue, clientWorkDictionary, this.ports, ss, this.allQueue);
             t.start();
  
         } catch (Exception e) {
@@ -78,14 +80,16 @@ class FaultHandler extends Thread {
     Dictionary<Integer, ArrayList<String>> clientWorkDictionary;
     ArrayList<Integer> ports;
     ServerSocket ss;
+    Queue<Boolean> allQueue;
 
     public FaultHandler(Queue<String> inputQueue, Queue<Integer> faultQueue,
-            Dictionary<Integer, ArrayList<String>> clientWorkDictionary, ArrayList<Integer> ports, ServerSocket ss) {
+            Dictionary<Integer, ArrayList<String>> clientWorkDictionary, ArrayList<Integer> ports, ServerSocket ss, Queue<Boolean> allQueue) {
         this.inputQueue = inputQueue;
         this.clientWorkDictionary = clientWorkDictionary;
         this.faultQueue = faultQueue;
         this.ports = ports;
         this.ss = ss;
+        this.allQueue = allQueue;
     }
 
     @Override
@@ -96,12 +100,16 @@ class FaultHandler extends Thread {
             // server is listening on port 5056
 
             while(true){
-                // System.out.println("im stuck");
-                if (this.inputQueue.size() == 0){
+                // System.out.println("Ready to create if someone died");
+                Thread.sleep(500);
+				// System.out.println("inputSize:"+ this.inputQueue.size());
+				// System.out.println("faultSize:"+ this.faultQueue.size());
+                if (this.allQueue.size() != 0){
                     break;
                 }
+
                 for (Integer i = 1; i <= this.faultQueue.size(); i++) {
-                    Integer workerNum = this.faultQueue.poll();
+                    Integer workerNum = this.faultQueue.peek();
                     Socket s = null;
 
                     try {
@@ -122,10 +130,11 @@ class FaultHandler extends Thread {
 
                         // Invoking the start() method
                         t.start();
+                        this.faultQueue.poll();
 
                     } catch (Exception e) {
                         s.close();
-                        // e.printStackTrace();
+                        e.printStackTrace();
                     }
                 }
             }

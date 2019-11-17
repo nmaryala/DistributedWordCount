@@ -15,6 +15,7 @@ public class WordCount implements Master {
     PrintStream printStream;
     OutputStream fout;
     ArrayList<Integer> ports = new ArrayList<Integer>();
+    Queue<Boolean> allQueue = new LinkedList<>();
 
     public WordCount(int workerNum, String[] filenames) throws IOException {
         this.workerNum = workerNum;
@@ -54,7 +55,7 @@ public class WordCount implements Master {
         try {
             System.out.println("Hosting Master server......");
             // create a new Master Server thread to accept client request
-             Thread t = new MasterServer(this.workerNum, this.inputQueue, this.faultQueue,this.clientWorkDictionary,this.ports);
+             Thread t = new MasterServer(this.workerNum, this.inputQueue, this.faultQueue,this.clientWorkDictionary,this.ports, this.allQueue);
 
 
             t.start();
@@ -67,15 +68,21 @@ public class WordCount implements Master {
                 System.out.println("Worker:"+i+" created successfully !!");
             }
 
-            for (Integer i = 1; i <= this.workerNum; i++) {
-                System.out.println("Worker" + i + "\tOutput:\n" + output(processes.get(i - 1).getInputStream()));
+
+            Thread ft = new FaultTolerance(this.faultQueue, this.ports, this.processes, this.allQueue);
+            ft.start();
+            
+
+            while (this.processes.size() > 0){
+                System.out.println("Worker \tOutput:\n" + output(processes.get(0).getInputStream()));
+                int exitCode = processes.get(0).waitFor();
+                if (exitCode != 0) {
+                    System.out.println("Worker exited with error code : " + exitCode + output(processes.get(0).getErrorStream()));
+                }
+                this.processes.remove(0);
             }
 
-            int exitCode = processes.get(0).waitFor();
-            if (exitCode != 0) {
-                System.out.println();
-                System.out.println("Worker 1 exited with error code : " + exitCode + output(processes.get(0).getErrorStream()));
-            }
+            
 
             // printStream.println("Nikhjil");
             counter();
@@ -84,6 +91,7 @@ public class WordCount implements Master {
             e.printStackTrace();
         }
 
+        allQueue.add(true);
         System.out.println("All done !!");
     }
 
@@ -92,10 +100,10 @@ public class WordCount implements Master {
     }
 
     public void createWorker() throws IOException {
-        ProcessBuilder processBuilder = new ProcessBuilder();                    
+        ProcessBuilder processBuilder = new ProcessBuilder();
         String currPath2 =  System.getProperty("user.dir");
-        processBuilder.command("java", "-cp", currPath2+"/src/main/java/", currPath2+"/src/main/java/Client.java", Integer.toString(ports.get(0)));
-        // processBuilder.command("java", "-cp", "/home/nikhil/Desktop/git_workspace/Systems/project-2-group-8/src/main/java/", "/home/nikhil/Desktop/git_workspace/Systems/project-2-group-8/src/main/java/Client.java", Integer.toString(ports.get(0)));
+        // processBuilder.command("java", "-cp", currPath2+"/src/main/java/", currPath2+"/src/main/java/Client.java", Integer.toString(ports.get(0)));
+        processBuilder.command("java", "-cp", "/home/nikhil/Desktop/git_workspace/Systems/project-2-group-8/src/main/java/", "/home/nikhil/Desktop/git_workspace/Systems/project-2-group-8/src/main/java/Client.java", Integer.toString(ports.get(0)));
         Process process = processBuilder.start();
         processes.add(process);
     }
@@ -186,4 +194,51 @@ public class WordCount implements Master {
     }
 
 }
+
+class FaultTolerance  extends Thread{
+    Queue<Integer> faultQueue;
+    ArrayList<Integer> ports;
+    ArrayList<Process> processes;
+    Queue<Boolean> allQueue;
+
+    public FaultTolerance(Queue<Integer> faultQueue, ArrayList<Integer> ports, ArrayList<Process> processes, Queue<Boolean> allQueue){
+        this.faultQueue = faultQueue;
+        this.ports = ports;
+        this.processes = processes;
+        this.allQueue = allQueue;
+    }
+
+    @Override
+    public void run() {
+        try{
+            while(true){
+                Thread.sleep(500);
+                // System.out.println("Entered creating new processes but dind't start yet");
+
+                if(this.allQueue.size() != 0){
+                    break;
+                }
+
+                for (Integer i = 1; i <= this.faultQueue.size(); i++) {
+                    System.out.println("creating new one");
+                    createWorker();
+                }
+            }    
+        }
+        catch(Exception ex){
+            ex.printStackTrace();
+        }
+    }
+
+    public void createWorker() throws IOException {
+        ProcessBuilder processBuilder = new ProcessBuilder();
+        String currPath2 =  System.getProperty("user.dir");
+        // processBuilder.command("java", "-cp", currPath2+"/src/main/java/", currPath2+"/src/main/java/Client.java", Integer.toString(ports.get(0)));
+        processBuilder.command("java", "-cp", "/home/nikhil/Desktop/git_workspace/Systems/project-2-group-8/src/main/java/", "/home/nikhil/Desktop/git_workspace/Systems/project-2-group-8/src/main/java/Client.java", Integer.toString(ports.get(0)));
+        Process process = processBuilder.start();
+        processes.add(process);
+    }
+
+}
+
 

@@ -16,7 +16,7 @@ class ClientHandler extends Thread
 	
 
 	// Constructor 
-	public ClientHandler(Socket s, DataInputStream dis, DataOutputStream dos, int clientNumber, Queue<String> inputQueue, Queue<Integer> faultQueue,Dictionary<Integer, ArrayList<String>> clientWorkDictionary)
+	public 	ClientHandler(Socket s, DataInputStream dis, DataOutputStream dos, int clientNumber, Queue<String> inputQueue, Queue<Integer> faultQueue,Dictionary<Integer, ArrayList<String>> clientWorkDictionary)
 	{ 
 		this.s = s; 
 		this.dis = dis; 
@@ -83,7 +83,9 @@ class ClientHandler extends Thread
 				
 			}
 			catch(SocketTimeoutException ex){
+				System.err.println("TIMEOUT HAPPENED");
 				this.inputQueue.add(currentFileName);
+				System.out.println(this.inputQueue.size());
 				currentFileName = null;
 				this.faultQueue.add(clientNumber);
 

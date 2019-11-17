@@ -43,7 +43,8 @@ public class Client
 					builder.append(currentLine+" ");
 			        currentLine = reader.readLine();
 			    }
-			    reader.close();
+				reader.close();
+				// Thread.sleep(1000);
 
 				String fileContent = builder.toString();
 				String[] result = fileContent.split("\\s+");
@@ -68,6 +69,7 @@ public class Client
 			        writer.flush();
 			    }
 				writer.close();
+				// Thread.sleep(50000);
 
 
 				dos.writeUTF("Done");
