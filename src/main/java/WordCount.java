@@ -2,7 +2,7 @@ import java.io.IOException;
 import java.io.PrintStream;
 import java.io.*;
 import java.util.*;
-import java.util.concurrent.TimeUnit ;
+import java.util.concurrent.TimeUnit;
 
 import java.net.*;
 
@@ -11,7 +11,7 @@ public class WordCount implements Master {
     Integer workerNum;
     String[] filenames;
     Queue<String> inputQueue = new LinkedList<>();
-	Queue<Integer> faultQueue = new LinkedList<>();
+    Queue<Integer> faultQueue = new LinkedList<>();
     Dictionary<Integer, ArrayList<String>> clientWorkDictionary = new Hashtable();
     Integer currentCount;
     PrintStream printStream;
@@ -28,20 +28,20 @@ public class WordCount implements Master {
             this.inputQueue.add(filenames[i]);
         }
 
-        //Comment the below part before running tests
+        // Comment the below part before running tests
 
         // String outp = TestUtil.class.getReferenceOutput();
-        FileOutputStream fout=new FileOutputStream("result.txt", false);
+        FileOutputStream fout = new FileOutputStream("result.txt", false);
         setOutputStream(new PrintStream(fout));
-        }
+    }
 
     public void setOutputStream(PrintStream out) {
         this.printStream = out;
     }
 
     public static void main(String[] args) throws Exception {
-        String[] filenames = { "../../test/resources/simple.txt"};
-        WordCount wordCount = new WordCount(6, filenames);
+        String[] filenames = { "../../test/resources/simple.txt", "../../test/resources/simple.txt" };
+        WordCount wordCount = new WordCount(2, filenames);
         wordCount.run();
     }
 
@@ -57,62 +57,41 @@ public class WordCount implements Master {
         try {
             System.out.println("Hosting Master server......");
             // create a new Master Server thread to accept client request
-             Thread t = new MasterServer(this.workerNum, this.inputQueue, this.faultQueue,this.clientWorkDictionary,this.ports, this.allQueue);
-
+            Thread t = new MasterServer(this.workerNum, this.inputQueue, this.faultQueue, this.clientWorkDictionary,
+                    this.ports, this.allQueue);
 
             t.start();
             Thread.sleep(100);
             System.out.println("Master server hosted !!");
 
             for (Integer i = 1; i <= this.workerNum; i++) {
-                // if(i != 1){
-            	System.out.println("Creating worker:"+i);
+                System.out.println("Creating worker:" + i);
                 createWorker();
-                System.out.println("Worker:"+i+" created successfully !!");
-                	
-                // } else {
-               	// 	    System.out.println("Creating worker 2:"+i);
-                // createWorker2();
-                // System.out.println("Worker:"+i+" created successfully !!");
-                	
-                // }
+                System.out.println("Worker:" + i + " created successfully !!");
             }
-
 
             Thread ft = new FaultTolerance(this.faultQueue, this.ports, this.processes, this.allQueue);
             ft.start();
-            // System.out.println("M1");
 
-            while (this.processes.size() > 0){
-            	System.out.println(this.processes.size() );
+            while (this.processes.size() > 0) {
+                System.out.println(this.processes.size());
                 System.out.println(this.processes.get(0).pid());
                 System.out.println("Worker \tOutput:\n" + output(processes.get(0).getInputStream()));
                 int exitCode = processes.get(0).waitFor();
-                
-                // System.out.println("M2");
-                if (exitCode != 0) {
-                    if(exitCode == 137){
 
-                System.err.println("dEATH");
-				// this.inputQueue.add(currentFileName);
-				// System.out.println(this.inputQueue.size());
-				// currentFileName = null;
-				}
-                    System.out.println("Worker exited with error code : " + exitCode + output(processes.get(0).getErrorStream()));
-                	System.out.println("M3");
-                }  
-                // System.out.println("M4");
+                if (exitCode != 0) {
+                    if (exitCode == 137) {
+                        System.err.println("Worker died");
+                    }
+                    System.out.println(
+                            "Worker exited with error code : " + exitCode + output(processes.get(0).getErrorStream()));
+                }
                 this.processes.remove(0);
-                // System.out.println("M5");
             }
 
-            
-
-            // printStream.println("Nikhjil");
             counter();
 
         } catch (Exception e) {
-        	System.out.println("F3");
             e.printStackTrace();
         }
 
@@ -126,13 +105,15 @@ public class WordCount implements Master {
 
     public void createWorker() throws IOException {
         ProcessBuilder processBuilder = new ProcessBuilder();
-        String currPath2 =  System.getProperty("user.dir");
-         processBuilder.command("java", "-cp", currPath2, currPath2+"/Client.java", Integer.toString(ports.get(0)));
-        //processBuilder.command("java", "-cp", "/home/nikhil/Desktop/git_workspace/Systems/project-2-group-8/src/main/java/", "/home/nikhil/Desktop/git_workspace/Systems/project-2-group-8/src/main/java/Client.java", Integer.toString(ports.get(0)));
+        processBuilder.command("java", "-cp",
+                "/home/nikhil/Desktop/git_workspace/Systems/DistributedWordCount/src/main/java/",
+                "/home/nikhil/Desktop/git_workspace/Systems/DistributedWordCount/src/main/java/Client.java",
+                Integer.toString(ports.get(0)));
         Process process = processBuilder.start();
         processes.add(process);
     }
-     private void counter() {
+
+    private void counter() {
         try {
 
             HashMap<String, Integer> map1 = new HashMap<String, Integer>();
@@ -143,7 +124,7 @@ public class WordCount implements Master {
                 while ((line = reader1.readLine()) != null) {
                     int index = line.lastIndexOf(":");
 
-                    String[] parts = {line.substring(0,index),line.substring(index+1)};
+                    String[] parts = { line.substring(0, index), line.substring(index + 1) };
 
                     if (!map1.containsKey(parts[0])) {
                         String key = parts[0];
@@ -160,52 +141,41 @@ public class WordCount implements Master {
             }
             HashMap<String, Integer> hm1 = sortByValue(map1);
 
-            System.out.println("Came til here");
-            
             for (String key : hm1.keySet()) {
-                //writer.write(hm1.get(key) + ":" + key);
-                System.out.println(hm1.get(key) + " : " + key );
-                this.printStream.println(hm1.get(key) + " : " + key );
+                System.out.println(hm1.get(key) + " : " + key);
+                this.printStream.println(hm1.get(key) + " : " + key);
                 this.printStream.flush();
-                //writer.flush();
-                // dos.writeUTF(key + ":" + map.get(key))
             }
 
             this.printStream.close();
- 
 
         } catch (Exception e) {
-        	System.out.println("F1");
             e.printStackTrace();
         }
     }
 
-    private static HashMap<String, Integer> sortByValue(HashMap<String, Integer> hm) 
-    { 
-        // Create a list from elements of HashMap 
-        List<Map.Entry<String, Integer> > list = 
-               new LinkedList<Map.Entry<String, Integer> >(hm.entrySet()); 
-  
-        // Sort the list 
-        Collections.sort(list, new Comparator<Map.Entry<String, Integer> >() { 
-            public int compare(Map.Entry<String, Integer> o1,  
-                               Map.Entry<String, Integer> o2) 
-            { 
-                if(o1.getValue().equals(o2.getValue())) {
-            		return (o1.getKey()).compareTo(o2.getKey());
-            	}else {
-            		return (o2.getValue()).compareTo(o1.getValue());
-            	}
-            } 
-        }); 
-          
-        // put data from sorted list to hashmap  
-        HashMap<String, Integer> temp = new LinkedHashMap<String, Integer>(); 
-        for (Map.Entry<String, Integer> aa : list) { 
-            temp.put(aa.getKey(), aa.getValue()); 
-        } 
-        return temp; 
-    } 
+    private static HashMap<String, Integer> sortByValue(HashMap<String, Integer> hm) {
+        // Create a list from elements of HashMap
+        List<Map.Entry<String, Integer>> list = new LinkedList<Map.Entry<String, Integer>>(hm.entrySet());
+
+        // Sort the list
+        Collections.sort(list, new Comparator<Map.Entry<String, Integer>>() {
+            public int compare(Map.Entry<String, Integer> o1, Map.Entry<String, Integer> o2) {
+                if (o1.getValue().equals(o2.getValue())) {
+                    return (o1.getKey()).compareTo(o2.getKey());
+                } else {
+                    return (o2.getValue()).compareTo(o1.getValue());
+                }
+            }
+        });
+
+        // put data from sorted list to hashmap
+        HashMap<String, Integer> temp = new LinkedHashMap<String, Integer>();
+        for (Map.Entry<String, Integer> aa : list) {
+            temp.put(aa.getKey(), aa.getValue());
+        }
+        return temp;
+    }
 
     private static String output(InputStream inputStream) throws IOException {
         StringBuilder sb = new StringBuilder();
@@ -224,13 +194,14 @@ public class WordCount implements Master {
 
 }
 
-class FaultTolerance  extends Thread{
+class FaultTolerance extends Thread {
     Queue<Integer> faultQueue;
     ArrayList<Integer> ports;
     ArrayList<Process> processes;
     Queue<Boolean> allQueue;
 
-    public FaultTolerance(Queue<Integer> faultQueue, ArrayList<Integer> ports, ArrayList<Process> processes, Queue<Boolean> allQueue){
+    public FaultTolerance(Queue<Integer> faultQueue, ArrayList<Integer> ports, ArrayList<Process> processes,
+            Queue<Boolean> allQueue) {
         this.faultQueue = faultQueue;
         this.ports = ports;
         this.processes = processes;
@@ -239,36 +210,31 @@ class FaultTolerance  extends Thread{
 
     @Override
     public void run() {
-        try{
-            while(true){
+        try {
+            while (true) {
                 Thread.sleep(1000);
-                // System.out.println("Entered creating new processes but dind't start yet");
-
-                if(this.allQueue.size() != 0){
+                if (this.allQueue.size() != 0) {
                     break;
                 }
 
                 for (Integer i = 1; i <= this.faultQueue.size(); i++) {
-                    System.out.println("creating new one"+i);
+                    System.out.println("creating new Worker" + i);
                     createWorker();
                 }
-            }    
-        }
-        catch(Exception ex){
-        	System.out.println("F2");
+            }
+        } catch (Exception ex) {
             ex.printStackTrace();
         }
     }
 
     public void createWorker() throws IOException {
         ProcessBuilder processBuilder = new ProcessBuilder();
-        String currPath2 =  System.getProperty("user.dir");
-        processBuilder.command("java", "-cp", currPath2, currPath2+"/Client.java", Integer.toString(ports.get(0)));
-        //processBuilder.command("java", "-cp", "/home/nikhil/Desktop/git_workspace/Systems/project-2-group-8/src/main/java/", "/home/nikhil/Desktop/git_workspace/Systems/project-2-group-8/src/main/java/Client.java", Integer.toString(ports.get(0)));
+        processBuilder.command("java", "-cp",
+                "/home/nikhil/Desktop/git_workspace/Systems/DistributedWordCount/src/main/java/",
+                "/home/nikhil/Desktop/git_workspace/Systems/DistributedWordCount/src/main/java/Client.java",
+                Integer.toString(ports.get(0)));
         Process process = processBuilder.start();
         processes.add(process);
     }
 
 }
-
-

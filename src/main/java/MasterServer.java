@@ -17,7 +17,8 @@ class MasterServer extends Thread {
     Queue<Boolean> allQueue;
 
     public MasterServer(Integer workers, Queue<String> inputQueue, Queue<Integer> faultQueue,
-            Dictionary<Integer, ArrayList<String>> clientWorkDictionary, ArrayList<Integer> ports, Queue<Boolean> allQueue) {
+            Dictionary<Integer, ArrayList<String>> clientWorkDictionary, ArrayList<Integer> ports,
+            Queue<Boolean> allQueue) {
         this.workerNum = workers;
         this.inputQueue = inputQueue;
         this.clientWorkDictionary = clientWorkDictionary;
@@ -31,7 +32,6 @@ class MasterServer extends Thread {
         try {
             // running infinite loop for getting
             // client request
-            // server is listening on port 5056
             ServerSocket ss = new ServerSocket(0);
             ports.add(ss.getLocalPort());
             for (Integer i = 1; i <= this.workerNum; i++) {
@@ -51,7 +51,7 @@ class MasterServer extends Thread {
                     System.out.println("Assigning new thread for this client");
 
                     // create a new thread object
-                    Thread t = new ClientHandler(s, dis, dos, i, inputQueue, faultQueue,clientWorkDictionary);
+                    Thread t = new ClientHandler(s, dis, dos, i, inputQueue, faultQueue, clientWorkDictionary);
 
                     // Invoking the start() method
                     t.start();
@@ -61,17 +61,16 @@ class MasterServer extends Thread {
                     e.printStackTrace();
                 }
             }
- 
+
             Thread t = new FaultHandler(inputQueue, faultQueue, clientWorkDictionary, this.ports, ss, this.allQueue);
             t.start();
- 
+
         } catch (Exception e) {
             e.printStackTrace();
         }
     }
 
 }
-
 
 class FaultHandler extends Thread {
     Integer workerNum;
@@ -83,7 +82,8 @@ class FaultHandler extends Thread {
     Queue<Boolean> allQueue;
 
     public FaultHandler(Queue<String> inputQueue, Queue<Integer> faultQueue,
-            Dictionary<Integer, ArrayList<String>> clientWorkDictionary, ArrayList<Integer> ports, ServerSocket ss, Queue<Boolean> allQueue) {
+            Dictionary<Integer, ArrayList<String>> clientWorkDictionary, ArrayList<Integer> ports, ServerSocket ss,
+            Queue<Boolean> allQueue) {
         this.inputQueue = inputQueue;
         this.clientWorkDictionary = clientWorkDictionary;
         this.faultQueue = faultQueue;
@@ -99,12 +99,10 @@ class FaultHandler extends Thread {
             // client request
             // server is listening on port 5056
 
-            while(true){
-                
+            while (true) {
+
                 Thread.sleep(200);
-				// System.out.println("inputSize:"+ this.inputQueue.size());
-				// System.out.println("faultSize:"+ this.faultQueue.size());
-                if (this.allQueue.size() != 0){
+                if (this.allQueue.size() != 0) {
                     break;
                 }
 
@@ -126,7 +124,8 @@ class FaultHandler extends Thread {
                         System.out.println("Assigning new thread for this client in fault tolerance");
 
                         // create a new thread object
-                        Thread t = new ClientHandler(s, dis, dos, workerNum, inputQueue, faultQueue,clientWorkDictionary);
+                        Thread t = new ClientHandler(s, dis, dos, workerNum, inputQueue, faultQueue,
+                                clientWorkDictionary);
 
                         // Invoking the start() method
                         t.start();
@@ -147,4 +146,3 @@ class FaultHandler extends Thread {
     }
 
 }
-
